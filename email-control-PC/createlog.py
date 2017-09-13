@@ -1,5 +1,5 @@
 #encoding:utf8
-# 日志类
+# 日志工具
 
 import logging
 from datetime import datetime
