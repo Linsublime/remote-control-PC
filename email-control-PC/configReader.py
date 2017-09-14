@@ -1,14 +1,17 @@
-#encoding:utf8
-# 閰嶇疆鏂囦欢璇诲彇宸ュ叿
+# 配置文件读取工具
 
+#encoding:utf8
+
+import os
+import sys
 import ConfigParser
-import os, sys
+
 
 class ConfigReader(object):
     def __init__(self):
-        configFile = os.path.join(sys.path[0], '_config.ini')
+        configfile = os.path.join(sys.path[0], '_config.ini')
         self.cReader = ConfigParser.ConfigParser()
-        self.cReader.read(configFile)
+        self.cReader.read(configfile)
 
     def get_config(self, section, option):
         return self.cReader.get(section, option)

@@ -1,21 +1,24 @@
+'''Í¨¹ı½ÓÊÕÌØ¶¨ÓÊÏä·¢À´µÄÓÊ¼ş£¬ÔÙ½âÎö³öÓÊ¼şÖĞµÄÖ¸Áî£¬
+   À´ÊµÏÖÔ¶³Ì¿ØÖÆµçÄÔ¡£
+'''
+
 #encoding:utf8
-# é€šè¿‡æ¥æ”¶ç‰¹å®šé‚®ç®±å‘æ¥çš„é‚®ä»¶ï¼Œè§£æå‡ºé‚®ä»¶ä¸­çš„æŒ‡ä»¤ï¼Œ
-# æ¥å®ç°è¿œç¨‹æ§åˆ¶ç”µè„‘ã€‚
 
 import time
-from mailhelper import MailHelper
+
 from excutor import Excutor
+from mailhelper import MailHelper
 
 class Main(object):
 
     def run(self):
         while True:
             mail = MailHelper()
-            mailbody = mail.acceptMail()                # æŠ“å–é‚®ä»¶
-            mail_info = mail.analysisMail(mailbody)     # è§£æé‚®ä»¶
+            mailbody = mail.accept_mail()                # ×¥È¡ÓÊ¼ş
+            mail_info = mail.analysis_mail(mailbody)     # ½âÎöÓÊ¼ş
             excutor = Excutor()
-            excutor.excute(mail_info, mail)             # æ‰§è¡Œé‚®ä»¶å‘½ä»¤
-            time.sleep(30)                              # é—´éš”30ç§’
+            excutor.excute(mail_info, mail)             # Ö´ĞĞÓÊ¼şÃüÁî
+            time.sleep(30)                              # ¼ä¸ô30Ãë
 
 
 if __name__ == '__main__':

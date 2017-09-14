@@ -1,89 +1,96 @@
+# ÓÊ¼şÖúÊÖ
+
 #encoding:utf8
-# é‚®ä»¶åŠ©æ‰‹
 
 import re
 import poplib
 import smtplib
-from createlog import Log
-from configReader import ConfigReader
-from email.mime.text import MIMEText
 from email.parser import Parser
+from email.mime.text import MIMEText
+from configReader import ConfigReader
+
+from createlog import Log
+
 
 class MailHelper(object):
     def __init__(self):
-        self.log = Log()    # æ—¥å¿—å·¥å…·
-        self.configReader = ConfigReader()  # é…ç½®æ–‡ä»¶è¯»å–å·¥å…·
+        self.log = Log()                    # ÈÕÖ¾¹¤¾ß
+        self.configReader = ConfigReader()  # ÅäÖÃÎÄ¼ş¶ÁÈ¡¹¤¾ß
+        
         self.pophost = self.configReader.get_config('Slave', 'pophost')
         self.smtphost = self.configReader.get_config('Slave', 'smtphost')
         self.port = self.configReader.get_config('Slave', 'port')
         self.username = self.configReader.get_config('Slave', 'username')
         self.password = self.configReader.get_config('Slave', 'password')
-        self.bossMail = self.configReader.get_config('Boss', 'mail')
-        self.usernames = {'Slave':self.username, 'Boss':self.bossMail}
-        self.loginMail()
-
-
-    # ç™»å½•é‚®ä»¶æ”¶ã€å‘æœåŠ¡å™¨
-    def loginMail(self):
+        self.bossmail = self.configReader.get_config('Boss', 'mail')
+        self.usernames = {'Slave':self.username, 'Boss':self.bossmail}
+        
+        self.login_mail()
+        
+    def login_mail(self):
+    # µÇÂ¼ÓÊ¼şÊÕ¡¢·¢·şÎñÆ÷
         try:
-            # ç™»å½• pop æœåŠ¡å™¨
+            # µÇÂ¼ pop ·şÎñÆ÷
             self.pop3 = poplib.POP3_SSL(self.pophost)
-            self.pop3.set_debuglevel(0)     # level(1)å¯ä»¥è¾“å‡ºè°ƒè¯•ä¿¡æ¯
+            self.pop3.set_debuglevel(0)     # level(1)¿ÉÒÔÊä³öµ÷ÊÔĞÅÏ¢
             self.pop3.user(self.username)
             self.pop3.pass_(self.password)
-            self.pop3.list()                # æ­¤å¤„list()åªç”¨äºéªŒè¯æ˜¯å¦ç™»é™†æˆåŠŸ
-            # ç™»å½• smtp æœåŠ¡å™¨
+            self.pop3.list()    # ´Ë´¦list()Ö»ÓÃÓÚÑéÖ¤ÊÇ·ñµÇÂ½³É¹¦
+            
+            # µÇÂ¼ smtp ·şÎñÆ÷
             self.server = smtplib.SMTP_SSL()
-            self.server.connect(self.smtphost, self.port)   # ç«¯å£å·ä¸º465,ä¸èƒ½ç”¨25
+            self.server.connect(self.smtphost, self.port)   # ¶Ë¿ÚºÅÎª465,²»ÄÜÓÃ25
             self.server.login(self.username, self.password)
-            self.log.writeLog(u'ç™»é™†é‚®ç®±æˆåŠŸï¼')
+            self.log.write_log(u'µÇÂ½ÓÊÏä³É¹¦£¡')
+            
         except Exception, e:
-            print u'ç™»é™†å¤±è´¥ï¼'
-            self.log.writeError(u'ç™»é™†å¤±è´¥ï¼'+ str(e))
+            print u'µÇÂ½Ê§°Ü£¡'
+            self.log.error_log(u'µÇÂ½Ê§°Ü£¡' + str(e))
             exit()
 
-
-    # æ¥æ”¶æœ€æ–°ä¸€å°é‚®ä»¶
-    def acceptMail(self):
+    def accept_mail(self):
+    # ½ÓÊÕ×îĞÂÒ»·âÓÊ¼ş
         try:
-            mails = self.pop3.list()[1]     # ç¬¬2ä¸ªå…ƒç´ æ˜¯é‚®ä»¶åˆ—è¡¨ï¼Œç”±é‚®ä»¶ç´¢å¼•ç»„æˆï¼Œ
-                                            # ç´¢å¼•ä»1å¼€å§‹ï¼Œæ–°é‚®ä»¶ç´¢å¼•é å
-            mailbody = self.pop3.retr(len(mails))[1]    # retr()è·å–æŒ‡å®šç´¢å¼•çš„é‚®ä»¶ï¼Œ
-                                                        # ç¬¬2ä¸ªå…ƒç´ æ˜¯é‚®ä»¶ä½“
-            self.log.writeLog(u'æŠ“å–é‚®ä»¶æˆåŠŸï¼')
+            # »ñÈ¡ÓÊ¼şÁĞ±í
+            mails = self.pop3.list()[1]
+            # »ñÈ¡Ö¸¶¨Ë÷ÒıµÄÓÊ¼ş£¬Ë÷Òı´Ó1¿ªÊ¼£¬ĞÂÓÊ¼şË÷Òı×î´ó
+            mailbody = self.pop3.retr(len(mails))[1]
+            self.log.write_log(u'×¥È¡ÓÊ¼ş³É¹¦£¡')
             return mailbody
+        
         except Exception, e:
-            self.log.writeError(u'æŠ“å–é‚®ä»¶å¤±è´¥ï¼'+ str(e))
-            print u'æŠ“å–é‚®ä»¶å¤±è´¥!'
+            self.log.error_log(u'×¥È¡ÓÊ¼şÊ§°Ü£¡' + str(e))
+            print u'×¥È¡ÓÊ¼şÊ§°Ü!'
             return None
 
-
-    # è§£æå‡ºé‚®ä»¶çš„ä¸»é¢˜ã€å‘ä»¶äººã€å†…å®¹
-    def analysisMail(self, mailbody):
+    def analysis_mail(self, mailbody):
+    # ½âÎö³öÓÊ¼şµÄÖ÷Ìâ¡¢·¢¼şÈË¡¢ÄÚÈİ
         try:
-            # Parser()åœ¨emailæ¨¡å—ä¸­å¯æ‰¾åˆ°ï¼Œç”¨äºè§£æé‚®ä»¶ä½“
+            # Parser()ÔÚemailÄ£¿éÖĞ¿ÉÕÒµ½£¬ÓÃÓÚ½âÎöÓÊ¼şÌå
             msg = Parser().parsestr('\r\n'.join(mailbody))
             subject = msg.get('Subject')
             sender = msg.get('From')
             sender = re.search(r'<(.*?)>', sender, re.S).group(1)
-            # get_payload()æ–¹æ³•åªèƒ½ç”¨äºè·å–çº¯æ–‡æœ¬æ ¼å¼çš„é‚®ä»¶å†…å®¹
+            # get_payload()·½·¨Ö»ÄÜÓÃÓÚ»ñÈ¡´¿ÎÄ±¾¸ñÊ½µÄÓÊ¼şÄÚÈİ
             content = msg.get_payload(decode=True)
-            self.log.writeLog(u'é‚®ä»¶è§£æå®Œæˆã€‚')
+            self.log.write_log(u'ÓÊ¼ş½âÎöÍê³É¡£')
             mail_info = {'subject': subject, 'sender': sender, 'content': content}
             return mail_info
+        
         except Exception, e:
-            self.log.writeError(u'è§£æå¤±è´¥ï¼'+ str(e))
+            self.log.error_log(u'½âÎöÊ§°Ü£¡'+ str(e))
             return None
 
-
-    def sendMail(self, receiver, subject, content):
-        msg = MIMEText(content,'plain','utf-8') # çº¯æ–‡æœ¬ã€utf-8æ ¼å¼å†…å®¹
+    def send_mail(self, receiver, subject, content):
+        msg = MIMEText(content,'plain','utf-8') # ´¿ÎÄ±¾¡¢utf-8¸ñÊ½ÄÚÈİ
         msg['Subject'] = subject
-        msg['From'] = 'helper<%s>'%self.username    # æ˜µç§°<é‚®ç®±>
+        msg['From'] = 'helper<%s>'%self.username    # êÇ³Æ<ÓÊÏä>
+        
         try:
             self.server.sendmail(self.username, self.usernames[receiver], msg.as_string())
-            self.log.writeLog(u'æˆåŠŸå‘é€é‚®ä»¶åˆ°:%s!'%receiver)
+            self.log.write_log(u'³É¹¦·¢ËÍÓÊ¼şµ½:%s!'%receiver)
             return True
+        
         except Exception, e:
-            self.log.writeError(u'å‘é€å¤±è´¥ï¼'+ str(e))
+            self.log.error_log(u'·¢ËÍÊ§°Ü£¡' + str(e))
             return False

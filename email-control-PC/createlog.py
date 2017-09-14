@@ -1,5 +1,6 @@
+# 日志工具
+
 #encoding:utf8
-# 鏃ュ織宸ュ叿
 
 import logging
 from datetime import datetime
@@ -11,10 +12,11 @@ class Log(object):
                 format='%(asctime)s %(levelname)s %(message)s',
                 datefmt='%Y-%m-%d %H:%M:%S',
                 filename= 'log/' + datetime.now().strftime("%Y%m%d-%H") + '.log',
-                filemode='a')
+                filemode='a'
+                )
 
-    def writeLog(self, content):
+    def write_log(self, content):
         logging.info(content)
 
-    def writeError(self, errorcontent):
-        logging.error(errorcontent)
+    def error_log(self, error_content):
+        logging.error(error_content)

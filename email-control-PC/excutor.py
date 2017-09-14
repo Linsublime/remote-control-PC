@@ -1,8 +1,11 @@
+# Ö´ĞĞÓÊ¼şÃüÁî
+
 #encoding:utf8
-# æ‰§è¡Œé‚®ä»¶å‘½ä»¤
 
 import os
+
 from createlog import Log
+
 
 class Excutor(object):
     def __init__(self):
@@ -13,22 +16,24 @@ class Excutor(object):
         subject = mail_info['subject']
         content = mail_info['content']
 
-        # æ¯æ¬¡æ”¶åˆ°ä¸€å°å‘½ä»¤é‚®ä»¶åï¼Œè‡ªåŠ¨å‘é€ä¸€å°passé‚®ä»¶ä½œä¸ºæœ€æ–°é‚®ä»¶ï¼Œ
-        # å¦åˆ™ä¼šé‡å¤è¯»å–å‘½ä»¤é‚®ä»¶
-        if subject == 'pass':
+        '''Ã¿´ÎÊÕµ½Ò»·âÃüÁîÓÊ¼şºó£¬×Ô¶¯·¢ËÍÒ»·âpassÓÊ¼ş×÷Îª×îĞÂÓÊ¼ş£¬
+        ·ñÔò»áÖØ¸´¶ÁÈ¡ÃüÁîÓÊ¼ş
+        '''
+        if subject is 'pass':
             print 'pass'
         else:
-            if sender == mailhelper.bossMail:
-                mailhelper.sendMail('Slave', 'pass', 'test')
+            if sender is mailhelper.bossmail:
+                mailhelper.send_mail('Slave', 'pass', 'test')
                 try:
                     script_name = subject
-                    # ä»¥é‚®ä»¶ä¸»é¢˜ä¸ºæ–‡ä»¶åï¼Œå°†é‚®ä»¶å†…å®¹å†™å…¥æ–‡ä»¶ä¸­
+                    # ÒÔÓÊ¼şÖ÷ÌâÎªÎÄ¼şÃû£¬½«ÓÊ¼şÄÚÈİĞ´ÈëÎÄ¼şÖĞ
                     with open('script/%s.py'%script_name, 'w') as fi:
                         fi.write(content)
-                    # æ‰§è¡Œç”Ÿæˆçš„è„šæœ¬
+                    # Ö´ĞĞÉú³ÉµÄ½Å±¾
                     os.system('python script/%s.py'%script_name)
-                    mailhelper.sendMail('Boss', 'success', 'OK')
+                    mailhelper.send_mail('Boss', 'success', 'OK')
+                    
                 except Exception, e:
-                    self.log.writeError(u'æ‰§è¡Œå¤±è´¥ï¼š'+ str(e))
-                    mailhelper.sendMail('Boss', 'error', str(e))
+                    self.log.error_log(u'Ö´ĞĞÊ§°Ü£º' + str(e))
+                    mailhelper.send_mail('Boss', 'error', str(e))
 
